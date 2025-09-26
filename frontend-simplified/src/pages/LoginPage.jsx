@@ -1,20 +1,36 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
+import { useContext } from "react";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
- 
     console.log("LOGIN FORM DATA:", { email, password });
-
-
-    navigate("/");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) {
+        throw new Error("Login failed");
+      }
+      const data = await res.json();
+      console.log(data);
+      login(data);
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -25,7 +41,10 @@ const LoginPage = () => {
 
           <form onSubmit={submitForm}>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Email
               </label>
               <input
@@ -41,7 +60,10 @@ const LoginPage = () => {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Password
               </label>
               <input
