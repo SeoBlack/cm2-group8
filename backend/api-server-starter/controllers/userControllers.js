@@ -65,4 +65,17 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser };
+async function verifyToken(req, res) {
+  const { token } = req.headers.authorization.split(" ")[1];
+  if (!token) {
+    return res.status(400).json({ message: "Token is required" });
+  }
+  const { _id } = jwt.verify(token, process.env.SECRET);
+  const user = await User.findOne({ _id });
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+  res.status(200).json({ user });
+}
+
+module.exports = { registerUser, loginUser, verifyToken };
