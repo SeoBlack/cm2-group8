@@ -18,6 +18,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
+      select: true,
     },
     phone_number: {
       type: String,
@@ -55,18 +56,18 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  this.password = await bcrypt.hash(this.password, 10, (err, salt) => {
-    if (err) return next(err);
-    bcrypt.hash(this.password, salt, (err, hash) => {
-      if (err) return next(err);
-      this.password = hash;
-      next();
-    });
-  });
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 //compare password when logging in
 userSchema.methods.comparePassword = async function (password) {
+  console.log(password, this.password);
   return await bcrypt.compare(password, this.password);
 };
 
