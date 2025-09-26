@@ -21,7 +21,7 @@ const EditJobPage = () => {
 
   // Update Job
   // const updateJob = async (job) => {
-  //   const res = await fetch(`/api/jobs/${job.id}`, {
+  //   const res = await fetch(/api/jobs/${job.id}, {
   //     method: "PUT",
   //     headers: {
   //       "Content-Type": "application/json",
@@ -31,12 +31,15 @@ const EditJobPage = () => {
   //   return res.ok;
   // };
 
+  const token = localStorage.getItem("token");
+
   const updateJob = async (job) => {
     try {
       const res = await fetch(`/api/jobs/${job.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify(job),
       });
@@ -52,7 +55,13 @@ const EditJobPage = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await fetch(`/api/jobs/${id}`);
+        const res = await fetch(`/api/jobs/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        });
         if (!res.ok) {
           throw new Error("Network response was not ok");
         }
