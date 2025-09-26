@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
+import { useContext } from "react";
 
 const SignupPage = () => {
   const [name, setName] = useState("");
@@ -10,16 +12,31 @@ const SignupPage = () => {
   const [dob, setDob] = useState("");
   const [membership, setMembership] = useState("Free");
 
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
-  
     const newUser = { name, email, password, phone, gender, dob, membership };
     console.log("SIGNUP FORM DATA:", newUser);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
+      if (!res.ok) {
+        throw new Error("Signup failed");
+      }
+      const data = await res.json();
 
-    navigate("/login");
+      dispatch({ type: "LOGIN", payload: data });
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -31,7 +48,10 @@ const SignupPage = () => {
           <form onSubmit={submitForm}>
             {/* Name */}
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="name"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Full Name
               </label>
               <input
@@ -48,7 +68,10 @@ const SignupPage = () => {
 
             {/* Email */}
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Email
               </label>
               <input
@@ -65,7 +88,10 @@ const SignupPage = () => {
 
             {/* Password */}
             <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Password
               </label>
               <input
@@ -83,7 +109,10 @@ const SignupPage = () => {
 
             {/* Phone */}
             <div className="mb-4">
-              <label htmlFor="phone" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="phone"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Phone Number
               </label>
               <input
@@ -140,7 +169,10 @@ const SignupPage = () => {
 
             {/* Date of Birth */}
             <div className="mb-4">
-              <label htmlFor="dob" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="dob"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Date of Birth
               </label>
               <input
@@ -156,7 +188,10 @@ const SignupPage = () => {
 
             {/* Membership Status */}
             <div className="mb-6">
-              <label htmlFor="membership" className="block text-gray-700 font-bold mb-2">
+              <label
+                htmlFor="membership"
+                className="block text-gray-700 font-bold mb-2"
+              >
                 Membership Status
               </label>
               <select
@@ -194,4 +229,3 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
-
