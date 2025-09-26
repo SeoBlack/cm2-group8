@@ -27,6 +27,31 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const verifyToken = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      console.log("Verifying token:", token);
+      // Verify the token with the backend
+      try {
+        const response = await fetch("/api/auth/verify", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (data.valid) {
+          dispatch({ type: "LOGIN", payload: data.user });
+        } else {
+          dispatch({ type: "LOGOUT" });
+        }
+      } catch (error) {
+        console.error("Error verifying token:", error);
+        dispatch({ type: "LOGOUT" });
+      }
+    }
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -44,8 +69,10 @@ export const AuthProvider = ({ children }) => {
   }, [state.user]);
 
   return (
-    <AuthContext.Provider value={{ state, dispatch }}>
+    <AuthContext.Provider value={{ state,  dispatch, verifyToken }}>
       {children}
     </AuthContext.Provider>
   );
+
+
 };

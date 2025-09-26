@@ -1,5 +1,5 @@
 const User = require("../models/userModel");
-
+const jwt = require("jsonwebtoken");
 async function registerUser(req, res) {
   const {
     name,
@@ -66,7 +66,10 @@ async function loginUser(req, res) {
 }
 
 async function verifyToken(req, res) {
-  const { token } = req.headers.authorization.split(" ")[1];
+  const  token  = req.headers.authorization.split(" ")[1];
+  console.log("req.headers.authorization:", req.headers.authorization);
+  console.log("Extracted token:", token);
+  
   if (!token) {
     return res.status(400).json({ message: "Token is required" });
   }
