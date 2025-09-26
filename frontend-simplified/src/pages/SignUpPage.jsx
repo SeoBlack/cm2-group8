@@ -19,10 +19,18 @@ const SignupPage = () => {
   const submitForm = async (e) => {
     e.preventDefault();
 
-    const newUser = { name, email, password, phone, gender, dob, membership };
+    const newUser = {
+      name,
+      email,
+      password,
+      phone_number: phone,
+      gender,
+      date_of_birth: dob,
+      membership_status: membership,
+    };
     console.log("SIGNUP FORM DATA:", newUser);
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUser),
