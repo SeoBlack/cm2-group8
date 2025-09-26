@@ -1,14 +1,21 @@
-require('dotenv').config()
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const jobRouter = require("./routes/jobRouter");
 // const userRouter = require("./routes/userRouter");
-const { unknownEndpoint,errorHandler } = require("./middleware/customMiddleware");
+const {
+  unknownEndpoint,
+  errorHandler,
+} = require("./middleware/customMiddleware");
 const connectDB = require("./config/db");
 const cors = require("cors");
 
 // Middlewares
-app.use(cors())
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -16,6 +23,7 @@ connectDB();
 
 // Use the userRouter for all /users routes
 // app.use("/api/users", userRouter);
+app.use("/api", jobRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
