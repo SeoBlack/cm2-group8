@@ -2,28 +2,8 @@ const Job = require("../models/jobModel");
 
 async function createJob(req, res) {
   console.log(req.body);
-  const {
-    title,
-    type,
-    location,
-    description,
-    salary,
-    companyName,
-    companyDescription,
-    companyContactEmail,
-    companyContactPhone,
-  } = req.body;
-  if (
-    !title ||
-    !type ||
-    !location ||
-    !description ||
-    !salary ||
-    !companyName ||
-    !companyDescription ||
-    !companyContactEmail ||
-    !companyContactPhone
-  ) {
+  const { title, type, location, description, salary, company } = req.body;
+  if (!title || !type || !location || !description || !salary || !company) {
     return res.status(400).json({ message: "All fields are required" });
   }
   try {
@@ -34,10 +14,10 @@ async function createJob(req, res) {
       description,
       salary,
       company: {
-        name: companyName,
-        description: companyDescription,
-        contactEmail: companyContactEmail,
-        contactPhone: companyContactPhone,
+        name: company.name,
+        description: company.description,
+        contactEmail: company.contactEmail,
+        contactPhone: company.contactPhone,
       },
     });
     res.status(201).json(job);
@@ -47,8 +27,20 @@ async function createJob(req, res) {
 }
 
 async function getJobs(req, res) {
+  const { search, type, location, page, _limit } = req.query;
+  const skip = (page - 1) * _limit;
+  const query = {};
+  if (search) {
+    query.title = { $regex: search, $options: "i" };
+  }
+  if (type) {
+    query.type = type;
+  }
+  if (location) {
+    query.location = location;
+  }
   try {
-    const jobs = await Job.find();
+    const jobs = await Job.find(query).skip(skip).limit(_limit);
     res.status(200).json(jobs);
   } catch (error) {
     res.status(500).json({ message: error.message });
