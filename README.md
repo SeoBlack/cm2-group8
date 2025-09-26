@@ -1,4 +1,4 @@
-##SELF ASSISMANTS:
+## SELF ASSISMANTS:
 
 # Backend Code Self-Assessment - Soreen
 
