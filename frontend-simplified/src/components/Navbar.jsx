@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const linkClass = ({ isActive }) =>
@@ -13,9 +14,13 @@ const Navbar = () => {
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const user = state?.user || storedUser;
+  console.log("Navbar User:", user);
+
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
+    navigate("/login");
   };
 
   return (
@@ -53,7 +58,7 @@ const Navbar = () => {
                 ) : (
                   <div className="flex items-center space-x-3">
                     <span className="text-white font-semibold px-3 py-2">
-                      {user.name || user.username || "User"}
+                      {user.user.name}
                     </span>
                     <button
                       onClick={handleLogout}

@@ -6,11 +6,22 @@ const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchJobs = async () => {
       const apiUrl = isHome ? "/api/jobs?_limit=3" : "/api/jobs";
       try {
-        const res = await fetch(apiUrl);
+        const res = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch jobs");
+
         const data = await res.json();
         setJobs(data);
       } catch (error) {
@@ -21,7 +32,7 @@ const JobListings = ({ isHome = false }) => {
     };
 
     fetchJobs();
-  }, []);
+  }, [isHome, token]);
 
   return (
     <section className="bg-blue-50 px-4 py-10">
