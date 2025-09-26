@@ -9,7 +9,7 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ const LoginPage = () => {
       }
       const data = await res.json();
       console.log(data);
-      login(data);
+      dispatch({ type: "LOGIN", payload: data });
       navigate("/");
     } catch (err) {
       setError(err.message);

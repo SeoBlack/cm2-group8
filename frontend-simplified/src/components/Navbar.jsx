@@ -58,7 +58,7 @@ const Navbar = () => {
                 ) : (
                   <div className="flex items-center space-x-3">
                     <span className="text-white font-semibold px-3 py-2">
-                      {user.user.name}
+                  
                     </span>
                     <button
                       onClick={handleLogout}
