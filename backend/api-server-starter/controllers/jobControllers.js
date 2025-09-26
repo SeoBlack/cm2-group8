@@ -27,20 +27,14 @@ async function createJob(req, res) {
 }
 
 async function getJobs(req, res) {
-  const { search, type, location, page, _limit } = req.query;
-  const skip = (page - 1) * _limit;
-  const query = {};
-  if (search) {
-    query.title = { $regex: search, $options: "i" };
-  }
-  if (type) {
-    query.type = type;
-  }
-  if (location) {
-    query.location = location;
-  }
+  const { _limit } = req.query;
+
+  const limit = _limit ? parseInt(_limit) : 10;
+
   try {
-    const jobs = await Job.find(query).skip(skip).limit(_limit);
+    const jobs = limit
+      ? await Job.find({}).sort({ createdAt: -1 }).limit(limit)
+      : await Job.find({}).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
     res.status(500).json({ message: error.message });
