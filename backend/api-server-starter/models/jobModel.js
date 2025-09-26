@@ -11,10 +11,9 @@ const jobSchema = new mongoose.Schema({
   type: { type: String, required: true },
   location: { type: String, required: true },
   description: { type: String, required: true },
-  salary: { type: String, required: true },
+  salary: { type: Number, required: true, min: 0 }, // Changed to Number with validation
   company: { type: companySchema, required: true },
 });
-
 // Ensure virtual fields are serialized
 //setting the toJSON method to the jobSchema. This method is used to convert the jobSchema to a JSON object.
 jobSchema.set("toJSON", {
