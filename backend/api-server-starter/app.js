@@ -4,13 +4,14 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const jobRouter = require("./routes/jobRouter");
-// const userRouter = require("./routes/userRouter");
+const userRouter = require("./routes/userRouter");
 const {
   unknownEndpoint,
   errorHandler,
 } = require("./middleware/customMiddleware");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const requireAuth = require("./middleware/requireAuth");
 
 // Middlewares
 app.use(cors());
@@ -21,9 +22,9 @@ app.use(morgan("dev"));
 
 connectDB();
 
-// Use the userRouter for all /users routes
-// app.use("/api/users", userRouter);
-app.use("/api", jobRouter);
+// Routes
+app.use("/api/auth", userRouter); // no need to require auth for user routes as they are public routes
+app.use("/api", requireAuth, jobRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
