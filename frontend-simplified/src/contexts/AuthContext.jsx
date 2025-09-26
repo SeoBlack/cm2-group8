@@ -2,14 +2,22 @@ import { createContext, useReducer, useEffect } from "react";
 
 const initialState = {
   user: null,
+  token: localStorage.getItem("token") || null,
 };
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      return { ...state, user: action.payload };
+      localStorage.setItem("token", action.payload.token);
+      return { ...state, user: action.payload, token: action.payload.token };
     case "LOGOUT":
-      return { ...state, user: null };
+      // localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        user: null,
+        token: null,
+      };
     default:
       return state;
   }
