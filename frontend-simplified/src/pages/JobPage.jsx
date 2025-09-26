@@ -11,13 +11,7 @@ const JobPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Delete Job
-  // const deleteJob = async (id) => {
-  //   const res = await fetch(/api/jobs/${id}, {
-  //     method: "DELETE",
-  //   });
-  //   return;
-  // };
+ 
   const token = localStorage.getItem("token");
 
   const deleteJob = async (id) => {
